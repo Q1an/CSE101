@@ -15,26 +15,38 @@
 template <class T>
 std::list<T> top_order(Graph<T>& g) {
     std::list<T> topOrder;
+    bool dag = true;
     for (typename std::map<T, Vertex<T> *>::iterator it=g.vertices.begin(); it!=g.vertices.end(); ++it){
-    	explore(g,it->first,0,topOrder);
+        it->second->pre = -1;
+        it->second->post = -1;
     }
-    topOrder.reverse();
+    for (typename std::map<T, Vertex<T> *>::iterator it=g.vertices.begin(); it!=g.vertices.end(); ++it){
+    	explore(g,it->first,0,topOrder,dag);
+    }
+    if(dag){
+        topOrder.reverse();
+    }else{
+        topOrder.clear();
+    }
     return topOrder;
 }
 
 template <class T>
-void explore(Graph<T>& g, T t,int c,std::list<T>& topOrder){
+void explore(Graph<T>& g, T t,int c,std::list<T>& topOrder,bool& dag){
     if(g.vertices[t]->visited==false){
     	g.vertices[t]->visited=true;
     	g.vertices[t]->pre=c;
     	c++;
     	for (typename std::list<T>::iterator it=(g.vertices[t])->edges.begin(); it!=(g.vertices[t])->edges.end(); ++it){
-    		explore(g,*it,c,topOrder);
+    		explore(g,*it,c,topOrder,dag);
     	}
     	g.vertices[t]->post=c;
     	c++;
-    	printf("%c",t);
     	topOrder.push_back(t);
+    }else{
+        if(g.vertices[t]->post==-1){
+            dag = false;
+        }
     }
 }
 
