@@ -83,9 +83,6 @@ bool canReachBed(int n, int s1, int s2, int d1, int d2, std::list<int> o) {
     tile s = tile(s1,s2);
     tile d = tile(d1,d2);
 	std::set<tile> visited = dfs(g,s);
-	for(std::set<tile>::iterator it=visited.begin();it!=visited.end();++it){
-		printf("%d %d\n", it->a,it->b);
-	}
 	if(visited.count(d)==0){
 		return false;
 	}else{
