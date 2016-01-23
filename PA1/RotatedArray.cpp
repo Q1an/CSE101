@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 // you can change SIZE to vary the size of array
-#define SIZE 10000000
+#define SIZE 1000000000
 
 // returns the index of the element found in the list
 int naive_search(int * list, int e) {
@@ -36,55 +36,31 @@ int naive_search(int * list, int e) {
 }*/
 
 int bs(int * list, int e, int s, int t){
-    if(s==t){
-        if(list[s]==e){
-            return s;
-        }
-        else{
+    if(s>t){
             return -1;
-        }
     }else{
-        if(list[(s+t)/2]==e){
-            return (s+t)/2;
-        }else if(list[(s+t)/2]>e){
+        if(list[(s+t)/2]>e){
             return bs(list,e,s,(s+t)/2);
         }else if(list[(s+t)/2]<e){
             return bs(list,e,(s+t)/2+1,t);
+        }else{
+            return (s+t)/2;
         }
     }
 }
 
 int rs(int * list, int e, int s, int t){
-    if(list[s]==e){
-        return s;
-    }else if(list[s]<e){
-        if(list[(s+t)/2]==e){
-            return (s+t)/2;
-        }else if(list[(s+t)/2]>e){
-            return bs(list,e,s,(s+t)/2);
-        }else if(list[(s+t)/2]<e){
-            if(list[(s+t)/2]>list[s]){
-                return rs(list,e,(s+t)/2+1,t);
-            }else{
-                return rs(list,e,s,(s+t)/2);
-            }
-        }
-    } 
-    else if(list[s]>e){
-        if(list[(s+t)/2]==e){
-            return (s+t)/2;
-        }else if(list[(s+t)/2]>list[s]){
-            return rs(list,e,(s+t)/2+1,t);
-        }else if(list[(s+t)/2]<list[s]){
-            if(list[(s+t)/2]<e){
-                return bs(list,e,(s+t)/2+1,t);
-            }else{
-                return rs(list,e,s,(s+t)/2);
-            }
-        }
-    }
-    return -1;
+    int a = list[s];
+    int b = e;
+    int c = list[(s+t)/2];
+    if(a==b){ return s; }
+    else if(b==c){ return (s+t)/2; }
+    else if(a>b&&b>c){ return bs(list,e,(s+t)/2+1,t); }
+    else if(c>b&&b>a){ return bs(list,e,s,(s+t)/2); }
+    else if(a>c){ return rs(list,e,s,(s+t)/2); }
+    else{ return rs(list,e,(s+t)/2+1,t); }
 }
+
 int DQ_search(int * list, int e) {
     return rs(list,e,0,SIZE-1);
 }
@@ -114,9 +90,9 @@ int main(int argc, char * argv[]) {
 
     auto end = std::chrono::high_resolution_clock::now();
 
-    int elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end-begin).count();
+    int elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count();
 
-    std::cout << "Time for Naive Search: " << elapsed_time << "ms" << std::endl;
+    std::cout << "Time for Naive Search: " << elapsed_time << "us" << std::endl;
 
     // time the DQ approach
     begin = std::chrono::high_resolution_clock::now();
@@ -125,9 +101,9 @@ int main(int argc, char * argv[]) {
 
     end = std::chrono::high_resolution_clock::now();
 
-    elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end-begin).count();
+    elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count();
 
-    std::cout << "Time for DQ Search: " << elapsed_time << "ms" << std::endl;
+    std::cout << "Time for DQ Search: " << elapsed_time << "us" << std::endl;
 
     if (loc_naive != loc_DQ) {
         std::cout << "ERROR, indicies returned by naive and DQ do not match." << std::endl;
